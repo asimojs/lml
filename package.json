@@ -1,0 +1,43 @@
+{
+    "name": "@asimojs/lml",
+    "version": "0.0.1",
+    "description": "LML - List Markup Language",
+    "main": "dist/lml.mjs",
+    "types": "dist/lml.d.ts",
+    "typings": "dist/lml.d.ts",
+    "author": "Bertrand Laporte",
+    "license": "MIT",
+    "bugs": "https://github.com/asimojs/lml/issues",
+    "keywords": [
+        "jsx",
+        "ssr",
+        "dynamic page application",
+        "dpa",
+        "react",
+        "preact"
+    ],
+    "scripts": {
+        "clean": "rimraf dist lib",
+        "build": "yarn clean && tsc && vite build && cp -R lib/*.d.ts dist",
+        "test": "vitest",
+        "dev": "vite",
+        "coverage": "vitest run --coverage",
+        "serve": "vite preview",
+        "prepublish": "yarn build && vitest run"
+    },
+    "devDependencies": {
+        "@types/react": "^18.0.27",
+        "@types/react-dom": "^18.0.10",
+        "@testing-library/preact": "^3.2.3",
+        "@testing-library/user-event": "^14.4.3",
+        "@testing-library/dom": "8.20.0",
+        "jsdom": "^21.1.0",
+        "preact": "^10.11.3",
+        "preact-dom": "^1.0.1",
+        "rimraf": "5.0.0",
+        "typescript": "^4.9.4",
+        "vite": "^4.0.3",
+        "vitest": "^0.26.3",
+        "@preact/preset-vite": "^2.5.0"
+    }
+}
