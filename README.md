@@ -58,6 +58,12 @@ const ex7: LML =
     ]
 ```
 
+## Install
+
+```bash
+npm i @asimojs/lml
+```
+
 ## Syntax
 
 LML support 3 node types: **text nodes**, **fragments** and **element/component nodes**:
