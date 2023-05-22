@@ -211,7 +211,7 @@ export const defaultSanitizationRules: LmlSanitizationRules = {
     /** Forbid style, srcset and event handler attributes */
     forbiddenElementAttributes: new Set(["style", "srcset"]),
 
-
+    /** Tell if elemeent event handlers attributes must be discarded */
     forbidEventHandlers: true,
 
     /**
@@ -237,7 +237,7 @@ export const defaultSanitizationRules: LmlSanitizationRules = {
 export function lml2jsx(v: LML,
     createElement: (type: any | Function, props: { [key: string]: any }, ...children: any) => JSX.Element,
     getComponent?: ((name: string, namespace: string) => Function | null) | null,
-    error?: (msg: string) => void,
+    error?: ((msg: string) => void) | null,
     sanitizationRules?: LmlSanitizationRules)
     : JsxContent {
 

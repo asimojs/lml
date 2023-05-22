@@ -1,27 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { print } from './utils';
-import { nodeType } from '../lml';
+import { nodeType } from '../core';
 
 describe('LML - List-based Markup Language', () => {
-
-    // positives
-    // - easy to read/write for humans compared to JSON
-    // - fast parsing on the client side
-    // - framework agnostic, not bound to any server-side technology, cross platform (i.e. could be also used for mobile native apps)
-    // - possibility to process html as content (e.g. remove/transform elements, pick a subset of a list)
-    // - safe HTML (interpreted by the client and not blindly injected in the DOM)
-    // - easy transformation on client (e.g. to VDOM nodes or to HTML)
-    // - possibility to mix html content with structured data (e.g. JSON list containing JSON and LML values)
-    // - possibility to reference components
-    // - possibility to assign components to namespaces (and implement bundle lazy loading)
-    // - possibility to pass data structures as component attributes
-    // - possibility to support richer HTML syntax (e.g. decorators, tagged children blocks)
-    // - slightly smaller than HTML in average
-
-    // validation functions on authorized nodes (e.g. to create a DSL)
-    // validation on authorized components?
-    // attribute transformation - e.g. class => className
-
 
     describe('Text Nodes', () => {
         it('should support simple text nodes', async () => {

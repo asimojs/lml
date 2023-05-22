@@ -2,7 +2,7 @@ import React from 'react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { render, cleanup } from '@testing-library/preact';
 import { LML, LmlSanitizationRules } from '../types';
-import { defaultSanitizationRules, lml2jsx, processJSX } from '../lml';
+import { defaultSanitizationRules, lml2jsx, processJSX } from '../core';
 import { h } from 'preact';
 
 describe('LML Preact JSX', () => {
@@ -96,8 +96,8 @@ describe('LML Preact JSX', () => {
 
     // Component
     const ex5: LML =
-        // <MyCpt className="abc" foo="bar"> Some <span class="em">content...</span> </MyCpt>
-        ["*MyCpt.abc", { "title": "Data" }, " Some ", ["#span.em", "content... "]]
+        // <MyCpt className="abc" title="..."> Some <span class="em">content...</span> </MyCpt>
+        ["*MyCpt.abc", { "title": "..." }, " Some ", ["#span.em", "content... "]]
 
     // Node with type, id and empty attribute (here: checked - value will be ignored)
     const ex6: LML =
@@ -208,7 +208,7 @@ describe('LML Preact JSX', () => {
     });
 
     it('should support components', async () => {
-        expect(print(ex5)).toBe('<div><div class="mycpt abc"><div class="title">Data</div><div class="content"> Some <span class="em">content... </span></div></div></div>');
+        expect(print(ex5)).toBe('<div><div class="mycpt abc"><div class="title">...</div><div class="content"> Some <span class="em">content... </span></div></div></div>');
     });
 
     it('should automatically transform properties that are valid LML values', async () => {

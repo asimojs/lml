@@ -1,4 +1,4 @@
-import { RX_NODE_NAME } from "../lml";
+import { RX_NODE_NAME } from "../core";
 import { LML } from "../types";
 
 export function print(lml: LML, padding = ""): string[] {

@@ -10,7 +10,7 @@ export default defineConfig({
     },
     build: {
         lib: {
-            entry: resolve(__dirname, 'lib/lml.js'),
+            entry: resolve(__dirname, 'lib/index.js'),
             name: 'lml',
             fileName: 'lml',
         },

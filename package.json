@@ -18,7 +18,7 @@
     ],
     "scripts": {
         "clean": "rimraf dist lib",
-        "build": "yarn clean && tsc && vite build && cp -R lib/*.d.ts dist",
+        "build": "yarn clean && tsc && vite build && cp -R lib/*.d.ts dist && mv dist/index.d.ts dist/lml.d.ts",
         "test": "vitest",
         "dev": "vite",
         "coverage": "vitest run --coverage",

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { LML } from '../types';
-import { scan, updateLML } from '../lml';
+import { scan, updateLML } from '../core';
 import { print } from './utils';
 
 describe('LML update', () => {
