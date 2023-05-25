@@ -501,6 +501,191 @@ describe('LML update', () => {
         });
     });
 
+    describe('updates on root node', () => {
+        describe('fragment root', () => {
+            it('should support append on empty fragment', async () => {
+                const r = updateLML([], [{
+                    action: "append",
+                    content: "NEW-NODE"
+                }]);
+                expect(print(r)).toMatchObject([
+                    "NEW-NODE"
+                ]);
+
+                const r2 = updateLML([], [{
+                    action: "append",
+                    content: ["AA", "BB"]
+                }]);
+                expect(print(r2)).toMatchObject([
+                    "AA", "BB"
+                ]);
+            });
+
+            it('should support append on non-empty fragment', async () => {
+                const r = updateLML(["Hello"], [{
+                    action: "append",
+                    content: "NEW-NODE"
+                }]);
+                expect(print(r)).toMatchObject([
+                    "Hello", "NEW-NODE"
+                ]);
+
+                const r2 = updateLML(["Hello"], [{
+                    action: "append",
+                    content: ["AA", "BB"]
+                }]);
+                expect(print(r2)).toMatchObject([
+                    "Hello", "AA", "BB"
+                ]);
+            });
+
+            it('should support prepend on non-empty fragment', async () => {
+                const r = updateLML(["Hello"], [{
+                    action: "prepend",
+                    content: "NEW-NODE"
+                }]);
+                expect(print(r)).toMatchObject([
+                    "NEW-NODE", "Hello"
+                ]);
+
+                const r2 = updateLML(["Hello"], [{
+                    action: "prepend",
+                    content: ["AA", "BB"]
+                }]);
+                expect(print(r2)).toMatchObject([
+                    "AA", "BB", "Hello"
+                ]);
+            });
+
+            it('should support replace on non-empty fragment', async () => {
+                const r = updateLML(["Hello"], [{
+                    action: "replace",
+                    content: "NEW-NODE"
+                }]);
+                expect(print(r)).toMatchObject([
+                    "NEW-NODE"
+                ]);
+
+                const r2 = updateLML(["Hello"], [{
+                    action: "replace",
+                    content: ["AA", "BB"]
+                }]);
+                expect(print(r2)).toMatchObject([
+                    "AA", "BB"
+                ]);
+            });
+
+            it('should support replace on empty fragment', async () => {
+                const r = updateLML([], [{
+                    action: "replace",
+                    content: "NEW-NODE"
+                }]);
+                expect(print(r)).toMatchObject([
+                    "NEW-NODE"
+                ]);
+
+                const r2 = updateLML([], [{
+                    action: "replace",
+                    content: ["AA", "BB"]
+                }]);
+                expect(print(r2)).toMatchObject([
+                    "AA", "BB"
+                ]);
+            });
+
+            it('should support delete on empty fragment', async () => {
+                const r = updateLML([], [{
+                    action: "delete",
+                }]);
+                expect(print(r)).toMatchObject([]);
+            });
+
+            it('should support delete on non-empty fragment', async () => {
+                const r = updateLML(["Hello"], [{
+                    action: "delete"
+                }]);
+                expect(print(r)).toMatchObject([]);
+            });
+        });
+
+        describe('non-fragment root', () => {
+            it('should support append', async () => {
+                const r = updateLML(["#span", "Hello"], [{
+                    action: "append",
+                    content: "NEW-NODE",
+                    path: "foobar" // will be ignored
+                }]);
+                expect(print(r)).toMatchObject([
+                    "<span>",
+                    "  Hello",
+                    "</span>",
+                    "NEW-NODE"
+                ]);
+
+                const r2 = updateLML("Hello", [{
+                    action: "append",
+                    content: ["AA", "BB"]
+                }]);
+                expect(print(r2)).toMatchObject([
+                    "Hello", "AA", "BB"
+                ]);
+            });
+
+            it('should support prepend', async () => {
+                const r = updateLML(["#span", "Hello"], [{
+                    action: "prepend",
+                    content: "NEW-NODE",
+                    path: "foobar" // will be ignored
+                }]);
+                expect(print(r)).toMatchObject([
+                    "NEW-NODE",
+                    "<span>",
+                    "  Hello",
+                    "</span>"
+                ]);
+
+                const r2 = updateLML("Hello", [{
+                    action: "prepend",
+                    content: ["AA", "BB"]
+                }]);
+                expect(print(r2)).toMatchObject([
+                    "AA", "BB", "Hello"
+                ]);
+            });
+
+            it('should support replace', async () => {
+                const r = updateLML(["#span", "Hello"], [{
+                    action: "replace",
+                    content: "NEW-NODE",
+                    path: "foobar" // will be ignored
+                }]);
+                expect(print(r)).toMatchObject([
+                    "NEW-NODE"
+                ]);
+
+                const r2 = updateLML("Hello", [{
+                    action: "replace",
+                    content: ["AA", "BB"]
+                }]);
+                expect(print(r2)).toMatchObject([
+                    "AA", "BB"
+                ]);
+            });
+
+            it('should support delete', async () => {
+                const r = updateLML(["#span", "Hello"], [{
+                    action: "delete"
+                }]);
+                expect(print(r)).toMatchObject([]);
+
+                const r2 = updateLML("Hello", [{
+                    action: "delete"
+                }]);
+                expect(print(r2)).toMatchObject([]);
+            });
+        });
+    });
+
     describe('delete', () => {
         it('should support delete - node in array', async () => {
             const r = updateLML(ex1, [{
@@ -709,6 +894,40 @@ describe('LML update', () => {
                     "    NEW-NODE",
                     "  </span>",
                     "  CC",
+                    "</mycpt>",
+                ]);
+            });
+        });
+
+        describe('default for append and prepend', () => {
+            it('should work for append', async () => {
+                const r = updateLML(ex4, [{
+                    action: "append",
+                    node: "CPT",
+                    content: ["#span", "NEW-NODE"]
+                }]);
+                expect(print(r)).toMatchObject([
+                    '<mycpt() footer={"sections":["First",["#span","Second"]]}>',
+                    "  Hello",
+                    "  <span>",
+                    "    NEW-NODE",
+                    "  </span>",
+                    "</mycpt>",
+                ]);
+            });
+
+            it('should work for prepend', async () => {
+                const r = updateLML(ex4, [{
+                    action: "prepend",
+                    node: "CPT",
+                    content: ["#span", "NEW-NODE"]
+                }]);
+                expect(print(r)).toMatchObject([
+                    '<mycpt() footer={"sections":["First",["#span","Second"]]}>',
+                    "  <span>",
+                    "    NEW-NODE",
+                    "  </span>",
+                    "  Hello",
                     "</mycpt>",
                 ]);
             });

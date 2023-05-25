@@ -77,14 +77,17 @@ export interface LmlNodeUpdate {
 }
 export interface LmlNodeListUpdate {
     action: "append" | "prepend" | "replace";
-    node: LmlNodeKey;
-    path: LmlNodePath;
+    /** target node: root node if not provided */
+    node?: LmlNodeKey;
+    /** target path: default = empty for root node, "children" for "append" or "prepend", empty for "replace" */
+    path?: LmlNodePath;
     content: LML;
 }
 
 export interface LmlNodeDelete {
     action: "delete";
-    node: LmlNodeKey;
+    /** target node: root node if not provided */
+    node?: LmlNodeKey;
     path?: LmlNodePath;
 }
 

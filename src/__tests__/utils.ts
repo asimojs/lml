@@ -16,6 +16,7 @@ function printList(ls: string | any[], out: string[], padding = "") {
     // e.g. element: ["#div.abc.def", "title", "Hi!", [ "Some content..." ]]
     // or node list: ["Hello", ["#span.highlight", ["World"]], "!"]
 
+    if (!ls) return;
     if (typeof ls === "string") {
         // text node
         return out.push(padding + ls);

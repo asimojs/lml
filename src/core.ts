@@ -319,40 +319,54 @@ export function lml2jsx(v: LML,
  * @returns
  */
 export function updateLML(data: LML, instructions: LmlUpdate[]): LML {
+    let root: LmlFragment = nodeType(data) === "fragment" ? data as LmlFragment : [data];
+
     // instructions mapped by node key
     const targetKeys: Set<string> = new Set();
     for (const instruction of instructions) {
-        targetKeys.add(instruction.node);
+        instruction.node && targetKeys.add(instruction.node);
     }
 
     const nodes: Map<string, { node: LmlNode, parent: any, parentRef: string | number }> = new Map();
     const max = targetKeys.size;
-    let count = 0;
+    if (max > 0) {
+        let count = 0;
 
-    const root = [data];
-
-    scanNode(data, (k, node, parent, parentRef) => {
-        if (targetKeys.has(k)) {
-            count++;
-            nodes.set(k, {
-                node,
-                parent,
-                parentRef
-            });
-        }
-        return count < max; // stop when all nodes have been found
-    }, root, 0);
+        scanNode(data, (k, node, parent, parentRef) => {
+            if (targetKeys.has(k)) {
+                count++;
+                nodes.set(k, {
+                    node,
+                    parent,
+                    parentRef
+                });
+            }
+            return count < max; // stop when all nodes have been found
+        }, root, 0);
+    }
 
     // apply the insructions in order
     for (const ins of instructions) {
         const action = ins.action;
-        const k = ins.node;
-        let nd = nodes.get(k);
-        if (!nd) continue;
+        let node: LmlFragment | LmlNode = root, parent: any = null, prop: string | number = "", path = "";
 
-
-        let parent = nd.parent, prop = nd.parentRef, node = nd.node;
-        const path = ins.path;
+        if (ins.node) {
+            let nd = nodes.get(ins.node);
+            if (nd) {
+                parent = nd.parent;
+                prop = nd.parentRef;
+                node = nd.node;
+                path = ins.path || ""; // path is always empty if no node is provided
+                if (path === "") {
+                    const ndt = nodeType(node);
+                    if (ndt !== "invalid" && ndt !== "text" && (action === "append" || action === "prepend")) {
+                        path = "children"; // default value
+                    }
+                }
+            } else {
+                continue;
+            }
+        }
 
         if (path === "children") {
             if (node.length > 1) {
@@ -364,7 +378,7 @@ export function updateLML(data: LML, instructions: LmlUpdate[]): LML {
                 if (action === "delete") {
                     node.splice(child1, node.length - child1);
                 } else {
-                    const content = ins.content;
+                    const content: any = ins.content;
                     const contentType = nodeType(content);
 
                     if (contentType !== "invalid") {
@@ -410,7 +424,7 @@ export function updateLML(data: LML, instructions: LmlUpdate[]): LML {
                 node = parent[prop];
             }
         }
-        if (!nd) continue;
+        if (!node) continue;
 
         if (action === "delete") {
             if (Array.isArray(parent)) {
@@ -420,9 +434,11 @@ export function updateLML(data: LML, instructions: LmlUpdate[]): LML {
             } else if (parent) {
                 // node is root
                 parent[prop] = [];
+            } else {
+                root = [];
             }
         } else {
-            const content = ins.content!;
+            const content: any = ins.content!;
             const contentType = nodeType(content);
 
             if (contentType !== "invalid") {
@@ -459,6 +475,9 @@ export function updateLML(data: LML, instructions: LmlUpdate[]): LML {
                         } else if (action === "replace") {
                             parent[prop] = content;
                         }
+                    } else if (action === "replace") {
+                        // root node
+                        root = isContentFragment ? content : [content];
                     }
                 } else if ((action === "prepend" || action === "append") && nodeType(node) === "fragment") {
                     if (action === "append") {

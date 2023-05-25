@@ -1,7 +1,7 @@
 import React from 'react';
 import { beforeEach, describe, expect, it } from 'vitest'
 import { render, cleanup } from '@testing-library/preact';
-import { lml2jsx } from '../lml';
+import { lml2jsx } from '../core';
 import { LML } from '../types';
 import { h } from 'preact';
 

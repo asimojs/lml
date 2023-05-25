@@ -214,22 +214,25 @@ function updateLML(data: LML, instructions: LmlUpdate[]): LML {}
 
 type LmlUpdate = LmlNodeUpdate | LmlNodeListUpdate | LmlNodeDelete;
 
-interface LmlNodeUpdate {
+export interface LmlNodeUpdate {
     action: "insertBefore" | "insertAfter" | "replace";
     node: LmlNodeKey;
     path?: LmlNodePath;
     content: LML;
 }
-interface LmlNodeListUpdate {
+export interface LmlNodeListUpdate {
     action: "append" | "prepend" | "replace";
-    node: LmlNodeKey;
-    path: LmlNodePath;
+    /** target node: root node if not provided */
+    node?: LmlNodeKey;
+    /** target path: default = empty for root node, "children" for "append" or "prepend", empty for "replace" */
+    path?: LmlNodePath;
     content: LML;
 }
 
-interface LmlNodeDelete {
+export interface LmlNodeDelete {
     action: "delete";
-    node: LmlNodeKey;
+    /** target node: root node if not provided */
+    node?: LmlNodeKey;
     path?: LmlNodePath;
 }
 
@@ -264,6 +267,15 @@ expect(print(r2)).toMatchObject([
     '<mycpt() footer={"sections":["First",["#span","Second"],"NEW-NODE"]}>',
     '  Hello',
     '</mycpt>',
+]);
+
+const r3 = updateLML(["Hello"], [{
+    action: "replace",
+    content: ["AA", "BB"]
+    // no node key = root node
+}]);
+expect(print(r3)).toMatchObject([
+    "AA", "BB"
 ]);
 
 ```
