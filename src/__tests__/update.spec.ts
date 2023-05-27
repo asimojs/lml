@@ -4,10 +4,11 @@ import { scan, updateLML } from '../core';
 import { print } from './utils';
 
 describe('LML update', () => {
-    let ex1: LML, ex2: LML, ex3: LML, ex4: LML;
+    let ex1: LML, ex1bis: LML, ex2: LML, ex3: LML, ex4: LML;
 
     beforeEach(() => {
         ex1 = ["#div", "Hello", ["#span.firstName!FN", "Bart"], ["#span.lastName!LN", "Simpson"]];
+        ex1bis = ["#div", "Hello", ["#span.firstName", { "key": "FN" }, "Bart"], ["#span.lastName!LN", "Simpson"]];
         ex2 = ["#div!ROOT", "Hello World"];
         ex3 = ["*mycpt!CPT", { "foo": "bar", "title": ["#span!NAME", "Bart Simpson"] }];
         ex4 = ["*mycpt!CPT", { "footer": { "sections": ["First", ["#span", "Second"]] } }, "Hello"];
@@ -71,6 +72,28 @@ describe('LML update', () => {
                     "    Simpson",
                     "  </span>",
                     "</div>",
+                ]);
+            });
+
+            it('should support insertBefore - node in array', async () => {
+                const r = updateLML(ex1bis, [{
+                    action: "insertBefore",
+                    node: "FN",
+                    content: ["#span.title", { "key": "TITLE" }, "Mr"]
+                }]);
+                expect(print(r)).toMatchObject([
+                    '<div>',
+                    '  Hello',
+                    '  <span class="title" key="TITLE">',
+                    '    Mr',
+                    '  </span>',
+                    '  <span class="firstName" key="FN">',
+                    '    Bart',
+                    '  </span>',
+                    '  <span class="lastName">',
+                    '    Simpson',
+                    '  </span>',
+                    '</div>',
                 ]);
             });
 

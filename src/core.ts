@@ -294,7 +294,7 @@ export function lml2jsx(v: LML,
                     }
                 }
                 // change class into className
-                if (attributes && attributes["class"]) {
+                if (attributes && attributes["class"] && !attributes["className"]) {
                     attributes["className"] = attributes["class"];
                     // delete attributes["class"]; // seems to be ignored by react or preact when className is set
                 }
@@ -541,6 +541,11 @@ function scanNode(
             const idx = v0.indexOf(ATT_KEY_SEPARATOR);
             if (idx > -1) {
                 key = data[0].slice(idx + 1);
+            } else {
+                const v1 = data[1];
+                if (v1 && typeof v1 === "object" && !Array.isArray(v1)) {
+                    key = v1["key"];
+                }
             }
             if (key) {
                 const r = process(key, data as LmlNode, parent, parentRef);
