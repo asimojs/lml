@@ -94,37 +94,43 @@ export function processJSX(v: LML, f: LmlFormatter): JsxContent {
                 atts = next;
                 nextIdx++;
 
-                if (ntype) {
-                    atts["type"] = ntype;
+                if (ntype || clsValues || key) {
+                    if (ntype) {
+                        atts["type"] = ntype;
+                    }
+                    if (clsValues) {
+                        if (atts["class"] && typeof atts["class"] === "string") {
+                            atts["class"] = clsValues.join(" ") + " " + atts["class"];
+                        } else {
+                            atts["class"] = clsValues.join(" ");
+                        }
+                    }
+                    if (key) {
+                        atts["keyValue"] = atts["key"] = key.slice(1);
+                    }
+
+                    // as we mutated the original object, remove type and class from name
+                    (ls[0] as any) = `${nodeKind}${nsGroup || ""}${name}`;
                 }
-                if (clsValues) {
-                    if (atts["class"] && typeof atts["class"] === "string") {
-                        atts["class"] = clsValues.join(" ") + " " + atts["class"];
-                    } else {
+                const kv = atts["key"];
+                if (kv && kv !== atts["keyValue"]) {
+                    atts["keyValue"] = atts["key"]
+                }
+            } else {
+                // no atts object
+                if (key) {
+                    const kv = key.slice(1);;
+                    atts = { key: kv, keyValue: kv };
+                }
+                if (clsValues || ntype) {
+                    atts = atts || {};
+                    if (ntype) {
+                        atts["type"] = ntype;
+                    }
+                    if (clsValues) {
                         atts["class"] = clsValues.join(" ");
                     }
                 }
-                if (!key && atts["key"]) {
-                    atts["keyValue"] = atts["key"];
-                }
-
-                // as we mutated the original object, remove type and class from name
-                (ls[0] as any) = `${nodeKind}${nsGroup || ""}${name}`;
-            }
-            if (!atts && (clsValues || ntype)) {
-                atts = {};
-                if (ntype) {
-                    atts["type"] = ntype;
-                }
-                if (clsValues) {
-                    atts["class"] = clsValues.join(" ");
-                }
-            }
-            if (key) {
-                if (!atts) {
-                    atts = {};
-                }
-                atts["key"] = atts["keyValue"] = key.slice(1);
             }
 
             // lookup children
