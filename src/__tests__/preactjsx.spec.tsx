@@ -79,7 +79,7 @@ describe('LML Preact JSX', () => {
         // Hello World
         "Hello World";
 
-    // Span, no attribues
+    // Span, no attributes
     const ex2: LML =
         // <span class="hello"> Hello <em> World! </em></span>
         ["#span.hello", "Hello", ["#em", "World!"]]
@@ -213,6 +213,35 @@ describe('LML Preact JSX', () => {
 
     it('should automatically transform properties that are valid LML values', async () => {
         expect(print(ex7)).toBe('<div><div class="mycpt2" data-count="10"><img height="22px" width="22px" src="..."> / <span class="hello">Some <em>content...</em></span></div></div>');
+    });
+
+    it('should not mutate the LML nodes twice', async () => {
+        // class & className
+        const v1 = ["#div.foo", { "title": ".." }, "Hello"]
+        expect(v1).toMatchObject(["#div.foo", { "title": ".." }, "Hello"]);
+        getJSX(v1);
+        expect(v1).toMatchObject(["#div", { "title": "..", "class": "foo", "className": "foo" }, "Hello"]);
+        getJSX(v1);
+        // no more changes
+        expect(v1).toMatchObject(["#div", { "title": "..", "class": "foo", "className": "foo" }, "Hello"]);
+
+        // type
+        const v2 = ["#input+text.foo.bar", { "title": "..", "class": "abc" }]
+        expect(v2).toMatchObject(["#input+text.foo.bar", { "title": ".." }]);
+        getJSX(v2);
+        expect(v2).toMatchObject(["#input", { "title": "..", "class": "foo bar abc", "className": "foo bar abc", "type": "text" }]);
+        getJSX(v2);
+        // no more chages
+        expect(v2).toMatchObject(["#input", { "title": "..", "class": "foo bar abc", "className": "foo bar abc", "type": "text" }]);
+
+        // key
+        const v3 = ["*b:MyCpt.xyz!ABCDE", { "title": ".." }];
+        expect(v3).toMatchObject(["*b:MyCpt.xyz!ABCDE", { "title": ".." }]);
+        getJSX(v3);
+        expect(v3).toMatchObject(["*b:MyCpt", { "title": "..", "class": "xyz", "className": "xyz", "key": "ABCDE", "keyValue": "ABCDE" }]);
+        getJSX(v3);
+        // no more changes
+        expect(v3).toMatchObject(["*b:MyCpt", { "title": "..", "class": "xyz", "className": "xyz", "key": "ABCDE", "keyValue": "ABCDE" }]);
     });
 
     describe('Errors', () => {

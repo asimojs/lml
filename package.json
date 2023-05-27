@@ -1,6 +1,6 @@
 {
     "name": "@asimojs/lml",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "LML - List Markup Language",
     "main": "dist/lml.mjs",
     "types": "dist/lml.d.ts",

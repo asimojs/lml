@@ -104,6 +104,12 @@ export function processJSX(v: LML, f: LmlFormatter): JsxContent {
                         atts["class"] = clsValues.join(" ");
                     }
                 }
+                if (!key && atts["key"]) {
+                    atts["keyValue"] = atts["key"];
+                }
+
+                // as we mutated the original object, remove type and class from name
+                (ls[0] as any) = `${nodeKind}${nsGroup || ""}${name}`;
             }
             if (!atts && (clsValues || ntype)) {
                 atts = {};
@@ -118,7 +124,7 @@ export function processJSX(v: LML, f: LmlFormatter): JsxContent {
                 if (!atts) {
                     atts = {};
                 }
-                atts["key"] = key.slice(1);
+                atts["key"] = atts["keyValue"] = key.slice(1);
             }
 
             // lookup children
@@ -285,10 +291,6 @@ export function lml2jsx(v: LML,
                 if (attributes && attributes["class"]) {
                     attributes["className"] = attributes["class"];
                     // delete attributes["class"]; // seems to be ignored by react or preact when className is set
-                }
-                if (attributes && attributes["key"]) {
-                    // key will be interpreted by the JSX engine and will not be accessible to the node
-                    attributes["keyValue"] = attributes["key"];
                 }
                 let nameOrRef = (ndi as any).tagName;
                 if (tp === "component") {

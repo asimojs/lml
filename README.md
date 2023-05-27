@@ -28,7 +28,7 @@ Main benefits:
 const ex1: LML =
     // Hello World
     "Hello World";
-// Span, no attribues -> # prefix for elements
+// Span, no attributes -> # prefix for elements
 const ex2: LML =
     // <span class="hello"> Hello <em> World! </em></span>
     ["#span.hello", "Hello", ["#em", "World!"]]
@@ -40,7 +40,7 @@ const ex3: LML =
 const ex4: LML =
     // <Fragment><em>Hello</em>World!</Fragment>
     [["#em", "Hello"], "World!"]
-// Component -> * prefix for elements
+// Component -> * prefix instead of #
 const ex5: LML =
     // <MyCpt className="abc" title="..."> Some <span class="em">content...</span> </MyCpt>
     ["*MyCpt.abc", { "title": "..." }, " Some ", ["#span.em", "content... "]]
